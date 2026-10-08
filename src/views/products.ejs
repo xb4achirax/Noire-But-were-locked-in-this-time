@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOIRE — <%= typeof pageTitle !=='undefined' ? pageTitle : 'All Products' %>
+  </title>
+  <meta name="description"
+    content="Shop NOIRE premium athletic streetwear. <%= typeof pageTitle !== 'undefined' ? pageTitle : 'All Products' %>." />
+  <link rel="stylesheet" href="/css/home.css" />
+  <link rel="stylesheet" href="/css/products.css" />
+  <link rel="stylesheet" href="/css/auth.css" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◼</text></svg>" />
+</head>
+
+<body>
+
+  <!-- Cursor Glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-left">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="/products/new-arrivals" <% if (typeof activeNav !=='undefined' && activeNav==='new-arrivals' ) {
+            %>class="active"<% } %>>New Arrivals</a></li>
+        <li><a href="/products/men" <% if (typeof activeNav !=='undefined' && activeNav==='men' ) { %>class="active"<% }
+              %>
+              >Men</a></li>
+        <li><a href="/products/women" <% if (typeof activeNav !=='undefined' && activeNav==='women' ) { %>class="active"
+            <% } %>
+              >Women
+          </a></li>
+        <li><a href="/products" <% if (typeof activeNav !=='undefined' && activeNav==='products' ) { %>class="active"<%
+              } %>>All Products</a></li>
+      </ul>
+    </div>
+    <div class="nav-center">
+      <a href="/" class="nav-logo"><img src="/images/logo.png" alt="NOIRE" class="nav-logo-img" /></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon" id="searchToggle" aria-label="Search">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="16.5" y1="16.5" x2="21" y2="21" />
+        </svg>
+      </button>
+      <a href="#" class="nav-icon auth-toggle" aria-label="Account">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" />
+        </svg>
+      </a>
+      <a href="/cart" class="nav-icon" aria-label="Cart">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 6h15l-1.5 9h-12z" />
+          <circle cx="9" cy="20" r="1.5" />
+          <circle cx="18" cy="20" r="1.5" />
+          <path d="M1 1h4l1 5" />
+        </svg>
+        <span class="cart-badge">0</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/new-arrivals">New Arrivals</a>
+    <a href="/men">Men</a>
+    <a href="/women">Women</a>
+    <a href="/products">All Products</a>
+    <a href="#" class="auth-toggle">Account</a>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" id="searchClose" aria-label="Close search">
+      <svg viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+    <div class="search-container">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="16.5" y1="16.5" x2="21" y2="21" />
+        </svg>
+        <input type="text" class="search-input" placeholder="Search products..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <section class="plp-header">
+    <div class="plp-header-inner">
+      <h1 class="plp-title">
+        <%= typeof pageTitle !=='undefined' ? pageTitle : 'All Products' %>
+      </h1>
+      <p class="plp-count"><span id="productCount">0</span> products</p>
+    </div>
+  </section>
+
+  <!-- Quick Size Filter Bar -->
+  <section class="size-bar" id="sizeBar">
+    <div class="size-bar-inner">
+      <span class="size-bar-label">Filter by size:</span>
+      <div class="size-pills" id="sizePills">
+        <button class="size-pill" data-size="XS">XS</button>
+        <button class="size-pill" data-size="S">S</button>
+        <button class="size-pill" data-size="M">M</button>
+        <button class="size-pill" data-size="L">L</button>
+        <button class="size-pill" data-size="XL">XL</button>
+        <button class="size-pill" data-size="XXL">XXL</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Layout: Sidebar + Grid -->
+  <main class="plp-main">
+    <!-- Filter Sidebar (Desktop) -->
+    <aside class="filter-sidebar" id="filterSidebar">
+      <div class="filter-sidebar-header">
+        <h2 class="filter-sidebar-title">Filter & Sort</h2>
+        <button class="filter-clear" id="clearAllFilters">Clear All</button>
+      </div>
+
+      <!-- Sort By -->
+      <div class="filter-group" data-group="sort">
+        <button class="filter-group-toggle" aria-expanded="true">
+          <span>Sort By</span>
+          <svg class="filter-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="filter-group-body open">
+          <label class="filter-radio">
+            <input type="radio" name="sort" value="relevancy" checked />
+            <span class="radio-mark"></span>
+            <span>Relevancy</span>
+          </label>
+          <label class="filter-radio">
+            <input type="radio" name="sort" value="newest" />
+            <span class="radio-mark"></span>
+            <span>Newest</span>
+          </label>
+          <label class="filter-radio">
+            <input type="radio" name="sort" value="price-asc" />
+            <span class="radio-mark"></span>
+            <span>Price: Low to High</span>
+          </label>
+          <label class="filter-radio">
+            <input type="radio" name="sort" value="price-desc" />
+            <span class="radio-mark"></span>
+            <span>Price: High to Low</span>
+          </label>
+          <label class="filter-radio">
+            <input type="radio" name="sort" value="discount" />
+            <span class="radio-mark"></span>
+            <span>Discount %: High to Low</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Product Type -->
+      <div class="filter-group" data-group="type">
+        <button class="filter-group-toggle" aria-expanded="false">
+          <span>Product Type</span>
+          <svg class="filter-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="filter-group-body">
+          <label class="filter-checkbox">
+            <input type="checkbox" name="type" value="hoodies" />
+            <span class="checkbox-mark"></span>
+            <span>Hoodies & Jackets</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" name="type" value="tees" />
+            <span class="checkbox-mark"></span>
+            <span>T-Shirts & Tops</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" name="type" value="tanks" />
+            <span class="checkbox-mark"></span>
+            <span>Tank Tops & Stringers</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" name="type" value="joggers" />
+            <span class="checkbox-mark"></span>
+            <span>Joggers & Pants</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" name="type" value="shorts" />
+            <span class="checkbox-mark"></span>
+            <span>Shorts</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" name="type" value="leggings" />
+            <span class="checkbox-mark"></span>
+            <span>Leggings</span>
+          </label>
+        </div>
+      </div>
+
+
+    </aside>
+
+    <!-- Mobile Filter Toggle -->
+    <button class="mobile-filter-btn" id="mobileFilterBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="4" y1="6" x2="20" y2="6" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="18" x2="20" y2="18" />
+        <circle cx="8" cy="6" r="2" fill="currentColor" />
+        <circle cx="16" cy="12" r="2" fill="currentColor" />
+        <circle cx="10" cy="18" r="2" fill="currentColor" />
+      </svg>
+      <span>Filter & Sort</span>
+    </button>
+
+    <!-- Mobile Filter Overlay -->
+    <div class="mobile-filter-overlay" id="mobileFilterOverlay">
+      <div class="mobile-filter-panel" id="mobileFilterPanel">
+        <div class="mobile-filter-header">
+          <h3>Filter & Sort</h3>
+          <button class="mobile-filter-close" id="mobileFilterClose">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="mobile-filter-body" id="mobileFilterBody">
+          <!-- JS will clone sidebar filters here -->
+        </div>
+        <div class="mobile-filter-footer">
+          <button class="mobile-filter-clear" id="mobileFilterClear">Clear All</button>
+          <button class="mobile-filter-apply" id="mobileFilterApply">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="plp-grid" id="productGrid">
+
+      <!-- Dynamic products -->
+      <%for (let i=0; i < products.length; i++) {%>
+        <%const productId=products[i].produit_id%>
+          <div class="product-card reveal visible">
+            <a class="product-card-link" href='/products/product/<%= productId %>'>
+              <div class="product-card-img">
+                <%let img=products[i].image_url%>
+                  <img src="<%= img %>" alt="<%= products[i].nom_produit %>" loading="lazy" />
+                  <div class="product-badge new">New</div>
+                  <button class="product-quickadd" aria-label="Quick add">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                  </button>
+              </div>
+              <div class="product-card-info">
+                <div class="product-colors">
+
+                  <span class="color-dot" style="background:#1a1a1a;" title="Black"></span>
+                </div>
+                <h3 class="product-name">
+                  <%= products[i].nom_produit %>
+                </h3>
+                <p class="product-price">$<%= products[i].produit_prix %>
+                </p>
+              </div>
+            </a>
+          </div>
+          <% } %>
+
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="footer">
+    <div class="footer-main">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="/" class="footer-logo"><img src="/images/logo.png" alt="NOIRE" class="footer-logo-img" /></a>
+          <p class="footer-brand-text">Engineered for the relentless. Premium athletic streetwear for those who refuse
+            to settle.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="5" />
+                <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+              </svg></a>
+            <a href="#" class="footer-social" aria-label="TikTok"><svg width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+              </svg></a>
+            <a href="#" class="footer-social" aria-label="Twitter / X"><svg width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 4l16 16M20 4L4 20" />
+              </svg></a>
+            <a href="#" class="footer-social" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="5" width="20" height="14" rx="4" />
+                <polygon points="10,8.5 16,12 10,15.5" fill="currentColor" stroke="none" />
+              </svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Shop</h4>
+          <ul class="footer-links">
+            <li><a href="/new-arrivals">New Arrivals</a></li>
+            <li><a href="/men">Men</a></li>
+            <li><a href="/women">Women</a></li>
+            <li><a href="/products">All Products</a></li>
+            <li><a href="/sale">Sale</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Support</h4>
+          <ul class="footer-links">
+            <li><a href="/contact">Contact Us</a></li>
+            <li><a href="/shipping">Shipping & Returns</a></li>
+            <li><a href="/faq">FAQ</a></li>
+            <li><a href="/size-guide">Size Guide</a></li>
+            <li><a href="/track-order">Track Order</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Company</h4>
+          <ul class="footer-links">
+            <li><a href="/about">Our Story</a></li>
+            <li><a href="/athletes">Athletes</a></li>
+            <li><a href="/sustainability">Sustainability</a></li>
+            <li><a href="/careers">Careers</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 NOIRE. All rights reserved.</p>
+      <div class="footer-bottom-links"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      ' use strict'; /* ---------- Cursor Glow ---------- */ const glow = document.getElementById('cursorGlow'); if
+        (window.matchMedia('(pointer: fine)').matches) {
+        document.addEventListener('mousemove', (e) => {
+          requestAnimationFrame(() => {
+            glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+          });
+        });
+      } else {
+        glow.style.display = 'none';
+      }
+
+      /* ---------- Hamburger ---------- */
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+        document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+      });
+      mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      }));
+
+      /* ---------- Search ---------- */
+      const searchToggle = document.getElementById('searchToggle');
+      const searchOverlay = document.getElementById('searchOverlay');
+      const searchClose = document.getElementById('searchClose');
+      const searchInput = searchOverlay.querySelector('.search-input');
+      searchToggle.addEventListener('click', () => {
+        searchOverlay.classList.add('open');
+        document.body.style.overflow = 'hidden'; setTimeout(() => searchInput.focus(), 400);
+      });
+      searchClose.addEventListener('click', closeSearch);
+      searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) closeSearch(); });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' &&
+          searchOverlay.classList.contains('open')) closeSearch();
+      });
+      function closeSearch() {
+        searchOverlay.classList.remove('open'); document.body.style.overflow = '';
+        searchInput.value = '';
+      }
+
+      /* ---------- Filter Accordion Toggle ---------- */
+      document.querySelectorAll('.filter-group-toggle').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const body = btn.nextElementSibling;
+          const expanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', !expanded);
+          body.classList.toggle('open');
+        });
+      });
+
+      /* ---------- Size Pill Bar ---------- */
+      document.querySelectorAll('.size-pill').forEach((pill) => {
+        pill.addEventListener('click', () => {
+          pill.classList.toggle('active');
+          // Also sync with sidebar size checkboxes
+          const size = pill.dataset.size;
+          const checkbox = document.querySelector(`.filter-sidebar input[name="size"][value="${size}"]`);
+          if (checkbox) checkbox.checked = pill.classList.contains('active');
+        });
+      });
+
+      /* ---------- Sidebar size checkboxes → sync with pills ---------- */
+      document.querySelectorAll('.filter-sidebar input[name="size"]').forEach((cb) => {
+        cb.addEventListener('change', () => {
+          const pill = document.querySelector(`.size-pill[data-size="${cb.value}"]`);
+          if (pill) pill.classList.toggle('active', cb.checked);
+        });
+      });
+
+      /* ---------- Mobile Filter Drawer ---------- */
+      const mobileFilterBtn = document.getElementById('mobileFilterBtn');
+      const mobileFilterOverlay = document.getElementById('mobileFilterOverlay');
+      const mobileFilterPanel = document.getElementById('mobileFilterPanel');
+      const mobileFilterClose = document.getElementById('mobileFilterClose');
+      const mobileFilterApply = document.getElementById('mobileFilterApply');
+      const mobileFilterClear = document.getElementById('mobileFilterClear');
+      const mobileFilterBody = document.getElementById('mobileFilterBody');
+
+      // Clone sidebar filters into mobile panel
+      const sidebarClone = document.getElementById('filterSidebar').cloneNode(true);
+      sidebarClone.removeAttribute('id');
+      sidebarClone.classList.remove('filter-sidebar');
+      sidebarClone.classList.add('mobile-filter-content');
+      // Remove the header from clone
+      const cloneHeader = sidebarClone.querySelector('.filter-sidebar-header');
+      if (cloneHeader) cloneHeader.remove();
+      mobileFilterBody.appendChild(sidebarClone);
+
+      // Re-attach accordion toggles on cloned elements
+      mobileFilterBody.querySelectorAll('.filter-group-toggle').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const body = btn.nextElementSibling;
+          const expanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', !expanded);
+          body.classList.toggle('open');
+        });
+      });
+
+      mobileFilterBtn.addEventListener('click', () => {
+        mobileFilterOverlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+
+      function closeMobileFilter() {
+        mobileFilterOverlay.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      mobileFilterClose.addEventListener('click', closeMobileFilter);
+      mobileFilterApply.addEventListener('click', closeMobileFilter);
+      mobileFilterOverlay.addEventListener('click', (e) => {
+        if (e.target === mobileFilterOverlay) closeMobileFilter();
+      });
+
+      mobileFilterClear.addEventListener('click', () => {
+        mobileFilterBody.querySelectorAll('input[type="checkbox"]').forEach((cb) => cb.checked = false);
+        mobileFilterBody.querySelectorAll('input[type="radio"][value="relevancy"]').forEach((r) => r.checked =
+          true);
+      });
+
+      /* ---------- Clear All (Desktop) ---------- */
+      document.getElementById('clearAllFilters').addEventListener('click', () => {
+        document.querySelectorAll('.filter-sidebar input[type="checkbox"]').forEach((cb) => cb.checked = false);
+        document.querySelector('.filter-sidebar input[type="radio"][value="relevancy"]').checked = true;
+        document.querySelectorAll('.size-pill').forEach((p) => p.classList.remove('active'));
+      });
+
+      /* ---------- Update product count ---------- */
+      const countEl = document.getElementById('productCount');
+      const grid = document.getElementById('productGrid');
+      function updateCount() {
+        const visible = grid.querySelectorAll('.product-card:not([style*="display: none"])').length;
+        countEl.textContent = visible;
+      }
+      // Run on load and observe grid for changes
+      updateCount();
+      const observer = new MutationObserver(updateCount);
+      observer.observe(grid, { childList: true, subtree: true, attributes: true });
+
+
+    })();
+  </script>
+
+  <!-- Auth Panel -->
+  <div class="auth-overlay" id="authOverlay"></div>
+  <div class="auth-panel" id="authPanel">
+    <div class="auth-header">
+      <h2 id="authTitle">Sign In</h2>
+      <button class="auth-close" id="authClose" aria-label="Close login">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <button class="auth-google-btn">
+      <svg viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+      </svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider">or</div>
+    <form class="auth-form" onsubmit="event.preventDefault();">
+      <div class="auth-input-group" id="authNameGroup" style="display: none;">
+        <label for="authName">Name</label>
+        <input type="text" id="authName" placeholder="Enter your full name" />
+      </div>
+      <div class="auth-input-group">
+        <label for="authEmail">Email</label>
+        <input type="email" id="authEmail" placeholder="Enter your email" required />
+      </div>
+      <div class="auth-input-group">
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" placeholder="Enter your password" required />
+      </div>
+      <button type="submit" class="auth-submit-btn" id="authSubmitBtn">Sign In</button>
+    </form>
+    <div class="auth-footer">
+      <span id="authFooterText">Don't have an account?</span> <a href="#" id="authToggleMode">Sign up</a>
+    </div>
+  </div>
+  <script>
+    const authToggles = document.querySelectorAll('.auth-toggle');
+    const authOverlay = document.getElementById('authOverlay');
+    const authPanel = document.getElementById('authPanel');
+    const authClose = document.getElementById('authClose');
+    function openAuth(e) { e.preventDefault(); authOverlay.classList.add('open'); authPanel.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeAuth() { authOverlay.classList.remove('open'); authPanel.classList.remove('open'); document.body.style.overflow = ''; }
+    authToggles.forEach(t => t.addEventListener('click', openAuth));
+    if(authClose) authClose.addEventListener('click', closeAuth);
+    if(authOverlay) authOverlay.addEventListener('click', closeAuth);
+
+    const authToggleMode = document.getElementById('authToggleMode');
+    const authTitle = document.getElementById('authTitle');
+    const authNameGroup = document.getElementById('authNameGroup');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authFooterText = document.getElementById('authFooterText');
+    let isSignUp = false;
+
+    if(authToggleMode) {
+      authToggleMode.addEventListener('click', (e) => {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        if(isSignUp) {
+          authTitle.textContent = 'Create Account';
+          authNameGroup.style.display = 'flex';
+          authNameGroup.querySelector('input').required = true;
+          authSubmitBtn.textContent = 'Sign Up';
+          authFooterText.textContent = 'Already have an account?';
+          authToggleMode.textContent = 'Sign in';
+        } else {
+          authTitle.textContent = 'Sign In';
+          authNameGroup.style.display = 'none';
+          authNameGroup.querySelector('input').required = false;
+          authSubmitBtn.textContent = 'Sign In';
+          authFooterText.textContent = "Don't have an account?";
+          authToggleMode.textContent = 'Sign up';
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOIRE — <%= product[0].nom_produit %>
+  </title>
+  <meta name="description"
+    content="<%= product[0].produit_description ? product[0].produit_description : 'Shop ' + product[0].nom_produit + ' at NOIRE. Premium athletic streetwear engineered for the relentless.' %>" />
+  <link rel="stylesheet" href="/css/home.css" />
+  <link rel="stylesheet" href="/css/product.css" />
+  <link rel="stylesheet" href="/css/auth.css" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◼</text></svg>" />
+</head>
+
+<body>
+
+  <!-- Cursor Glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-left">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="/products/new-arrivals">New Arrivals</a></li>
+        <li><a href="/products/men">Men</a></li>
+        <li><a href="/products/women">Women</a></li>
+        <li><a href="/products">All Products</a></li>
+      </ul>
+    </div>
+    <div class="nav-center">
+      <a href="/" class="nav-logo"><img src="/images/logo.png" alt="NOIRE" class="nav-logo-img" /></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon" id="searchToggle" aria-label="Search">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="16.5" y1="16.5" x2="21" y2="21" />
+        </svg>
+      </button>
+      <a href="#" class="nav-icon auth-toggle" aria-label="Account">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" />
+        </svg>
+      </a>
+      <a href="/cart" class="nav-icon" aria-label="Cart">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 6h15l-1.5 9h-12z" />
+          <circle cx="9" cy="20" r="1.5" />
+          <circle cx="18" cy="20" r="1.5" />
+          <path d="M1 1h4l1 5" />
+        </svg>
+        <span class="cart-badge">0</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/products/new-arrivals">New Arrivals</a>
+    <a href="/products/men">Men</a>
+    <a href="/products/women">Women</a>
+    <a href="/products">All Products</a>
+    <a href="#" class="auth-toggle">Account</a>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" id="searchClose" aria-label="Close search">
+      <svg viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+    <div class="search-container">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="16.5" y1="16.5" x2="21" y2="21" />
+        </svg>
+        <input type="text" class="search-input" placeholder="Search products..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- Breadcrumbs -->
+  <div class="pdp-breadcrumbs">
+    <nav>
+      <a href="/">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="/products">All Products</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">
+        <%= product[0].nom_produit %>
+      </span>
+    </nav>
+  </div>
+
+  <% /* ---- Build unique images & variants arrays from the raw rows ---- */ const allImages=[]; const seenImageIds=new
+    Set(); const allVariants=[]; const seenVariantIds=new Set(); const allColors=[]; const seenColors=new Set(); const
+    allSizes=[]; const seenSizes=new Set(); for (let i=0; i < product.length; i++) { if
+    (!seenImageIds.has(product[i].image_id)) { seenImageIds.add(product[i].image_id); allImages.push({ id:
+    product[i].image_id, url: product[i].image_url }); } if (!seenVariantIds.has(product[i].variante_id)) {
+    seenVariantIds.add(product[i].variante_id); allVariants.push({ id: product[i].variante_id, taille:
+    product[i].variante_taille, couleur: product[i].variante_couleur }); } if (product[i].variante_couleur &&
+    !seenColors.has(product[i].variante_couleur)) { seenColors.add(product[i].variante_couleur);
+    allColors.push(product[i].variante_couleur); } if (product[i].variante_taille &&
+    !seenSizes.has(product[i].variante_taille)) { seenSizes.add(product[i].variante_taille);
+    allSizes.push(product[i].variante_taille); } } %>
+
+    <!-- Main PDP -->
+    <main class="pdp-main">
+
+      <!-- Desktop Gallery -->
+      <div class="pdp-gallery">
+        <!-- Thumbnails -->
+        <% if (allImages.length> 1) { %>
+          <div class="pdp-thumbnails">
+            <% for (let i=0; i < allImages.length; i++) { %>
+              <div class="pdp-thumb <%= i === 0 ? 'active' : '' %>" data-index="<%= i %>">
+                <img src="<%= allImages[i].url %>" alt="<%= product[0].nom_produit %> view <%= i + 1 %>"
+                  loading="lazy" />
+              </div>
+              <% } %>
+          </div>
+          <% } %>
+
+            <!-- Main Image -->
+            <div class="pdp-main-image">
+              <img src="<%= allImages[0].url %>" alt="<%= product[0].nom_produit %>" id="pdpMainImg" />
+
+              <% if (product[0].is_new_drop) { %>
+                <div class="pdp-image-badge">New Drop</div>
+                <% } %>
+
+                  <% if (allImages.length> 1) { %>
+                    <!-- Nav arrows -->
+                    <button class="pdp-image-nav prev" id="imgPrev" aria-label="Previous image">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M15 18l-6-6 6-6" />
+                      </svg>
+                    </button>
+                    <button class="pdp-image-nav next" id="imgNext" aria-label="Next image">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M9 6l6 6-6 6" />
+                      </svg>
+                    </button>
+
+                    <!-- Dots -->
+                    <div class="pdp-image-dots" id="imgDots">
+                      <% for (let i=0; i < allImages.length; i++) { %>
+                        <div class="pdp-image-dot <%= i === 0 ? 'active' : '' %>" data-index="<%= i %>"></div>
+                        <% } %>
+                    </div>
+                    <% } %>
+            </div>
+      </div>
+
+      <!-- Mobile Gallery (swipeable) -->
+      <div class="pdp-mobile-gallery" id="mobileGallery">
+        <div class="pdp-mobile-gallery-track" id="mobileGalleryTrack">
+          <% for (let i=0; i < allImages.length; i++) { %>
+            <div class="pdp-mobile-gallery-slide">
+              <img src="<%= allImages[i].url %>" alt="<%= product[0].nom_produit %> view <%= i + 1 %>" />
+            </div>
+            <% } %>
+        </div>
+        <% if (allImages.length> 1) { %>
+          <div class="pdp-mobile-dots" id="mobileDots">
+            <% for (let i=0; i < allImages.length; i++) { %>
+              <button class="pdp-mobile-dot <%= i === 0 ? 'active' : '' %>" data-index="<%= i %>"></button>
+              <% } %>
+          </div>
+          <% } %>
+      </div>
+
+      <!-- Product Info -->
+      <div class="pdp-info">
+
+        <span class="pdp-category">
+          <%= product[0].categorie_nom %>
+        </span>
+        <h1 class="pdp-product-name">
+          <%= product[0].nom_produit %>
+        </h1>
+
+        <div class="pdp-price-row">
+          <span class="pdp-price">$<%= product[0].produit_prix %></span>
+        </div>
+
+        <!-- Rating -->
+        <div class="pdp-rating">
+          <div class="pdp-stars">
+            <svg viewBox="0 0 24 24" class="filled">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" />
+            </svg>
+            <svg viewBox="0 0 24 24" class="filled">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" />
+            </svg>
+            <svg viewBox="0 0 24 24" class="filled">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" />
+            </svg>
+            <svg viewBox="0 0 24 24" class="filled">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" />
+            </svg>
+            <svg viewBox="0 0 24 24" class="empty">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" />
+            </svg>
+          </div>
+          <span class="pdp-rating-text"><span>4.0</span> (128 reviews)</span>
+        </div>
+
+        <!-- Description -->
+        <% if (product[0].produit_description) { %>
+          <p class="pdp-description">
+            <%= product[0].produit_description %>
+          </p>
+          <% } %>
+
+            <!-- Color Selector -->
+            <% if (allColors.length> 0) { %>
+              <div class="pdp-option-group">
+                <div class="pdp-option-label">Color: <span id="selectedColorName">
+                    <%= allColors[0] %>
+                  </span></div>
+                <div class="pdp-color-options" id="colorOptions">
+                  <% for (let i=0; i < allColors.length; i++) { %>
+                    <button class="pdp-color-swatch <%= i === 0 ? 'active' : '' %>"
+                      style="background-color: <%= allColors[i] %>;" data-color="<%= allColors[i] %>"
+                      title="<%= allColors[i] %>" aria-label="Color: <%= allColors[i] %>">
+                    </button>
+                    <% } %>
+                </div>
+              </div>
+              <% } %>
+
+                <!-- Size Selector -->
+                <% if (allSizes.length> 0) { %>
+                  <div class="pdp-option-group">
+                    <div class="pdp-option-label">Size: <span id="selectedSizeName">
+                        <%= allSizes[0] %>
+                      </span></div>
+                    <div class="pdp-size-options" id="sizeOptions">
+                      <% for (let i=0; i < allSizes.length; i++) { %>
+                        <button class="pdp-size-btn <%= i === 0 ? 'active' : '' %>" data-size="<%= allSizes[i] %>">
+                          <%= allSizes[i] %>
+                        </button>
+                        <% } %>
+                    </div>
+                    <a href="/size-guide" class="pdp-size-guide-link">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8">
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <line x1="6" y1="4" x2="6" y2="10" />
+                        <line x1="10" y1="4" x2="10" y2="8" />
+                        <line x1="14" y1="4" x2="14" y2="10" />
+                        <line x1="18" y1="4" x2="18" y2="8" />
+                      </svg>
+                      Size Guide
+                    </a>
+                  </div>
+                  <% } %>
+
+                    <!-- Add to Cart Actions -->
+                    <div class="pdp-actions">
+                      <div class="pdp-quantity">
+                        <button class="pdp-qty-btn" id="qtyMinus" aria-label="Decrease quantity">−</button>
+                        <input type="number" class="pdp-qty-value" id="qtyValue" value="1" min="1" max="10" />
+                        <button class="pdp-qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
+                      </div>
+                      <button class="pdp-add-to-cart" id="addToCartBtn">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M6 6h15l-1.5 9h-12z" />
+                          <circle cx="9" cy="20" r="1.5" />
+                          <circle cx="18" cy="20" r="1.5" />
+                          <path d="M1 1h4l1 5" />
+                        </svg>
+                        Add to Cart
+                      </button>
+                      <button class="pdp-wishlist" id="wishlistBtn" aria-label="Add to wishlist">
+                        <svg viewBox="0 0 24 24">
+                          <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="pdp-trust">
+                      <div class="pdp-trust-item">
+                        <div class="pdp-trust-icon">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M5 12l5 5L20 7" />
+                          </svg>
+                        </div>
+                        <span class="pdp-trust-text">Free Shipping<br>Over $100</span>
+                      </div>
+                      <div class="pdp-trust-item">
+                        <div class="pdp-trust-icon">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0" />
+                            <path d="M12 8v4l3 3" />
+                          </svg>
+                        </div>
+                        <span class="pdp-trust-text">30-Day<br>Easy Returns</span>
+                      </div>
+                      <div class="pdp-trust-item">
+                        <div class="pdp-trust-icon">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                          </svg>
+                        </div>
+                        <span class="pdp-trust-text">Secure<br>Checkout</span>
+                      </div>
+                    </div>
+
+                    <!-- Accordion Details -->
+                    <div class="pdp-details">
+                      <div class="pdp-detail-group">
+                        <button class="pdp-detail-toggle" aria-expanded="true">
+                          <span>Product Details</span>
+                          <svg class="pdp-detail-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </button>
+                        <div class="pdp-detail-body open">
+                          <ul>
+                            <li>Premium performance fabric</li>
+                            <li>Moisture-wicking technology</li>
+                            <li>4-way stretch for unrestricted movement</li>
+                            <li>Anti-odor treatment</li>
+                            <li>Reinforced seams for durability</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="pdp-detail-group">
+                        <button class="pdp-detail-toggle" aria-expanded="false">
+                          <span>Materials & Care</span>
+                          <svg class="pdp-detail-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </button>
+                        <div class="pdp-detail-body">
+                          <ul>
+                            <li>88% Polyester, 12% Elastane</li>
+                            <li>Machine wash cold with like colors</li>
+                            <li>Do not bleach</li>
+                            <li>Tumble dry low</li>
+                            <li>Do not iron print</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="pdp-detail-group">
+                        <button class="pdp-detail-toggle" aria-expanded="false">
+                          <span>Shipping & Returns</span>
+                          <svg class="pdp-detail-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </button>
+                        <div class="pdp-detail-body">
+                          <p>Free standard shipping on orders over $100. Express shipping available at checkout. 30-day
+                            hassle-free returns — unworn items with tags attached can be returned for a full refund.</p>
+                        </div>
+                      </div>
+                    </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" id="footer">
+      <div class="footer-main">
+        <div class="footer-grid">
+          <div class="footer-col footer-brand">
+            <a href="/" class="footer-logo"><img src="/images/logo.png" alt="NOIRE" class="footer-logo-img" /></a>
+            <p class="footer-brand-text">Engineered for the relentless. Premium athletic streetwear for those who refuse
+              to settle.</p>
+            <div class="footer-socials">
+              <a href="#" class="footer-social" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <circle cx="12" cy="12" r="5" />
+                  <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+                </svg></a>
+              <a href="#" class="footer-social" aria-label="TikTok"><svg width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                </svg></a>
+              <a href="#" class="footer-social" aria-label="Twitter / X"><svg width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M4 4l16 16M20 4L4 20" />
+                </svg></a>
+              <a href="#" class="footer-social" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="2" y="5" width="20" height="14" rx="4" />
+                  <polygon points="10,8.5 16,12 10,15.5" fill="currentColor" stroke="none" />
+                </svg></a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col-title">Shop</h4>
+            <ul class="footer-links">
+              <li><a href="/products/new-arrivals">New Arrivals</a></li>
+              <li><a href="/products/men">Men</a></li>
+              <li><a href="/products/women">Women</a></li>
+              <li><a href="/products">All Products</a></li>
+              <li><a href="/sale">Sale</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col-title">Support</h4>
+            <ul class="footer-links">
+              <li><a href="/contact">Contact Us</a></li>
+              <li><a href="/shipping">Shipping & Returns</a></li>
+              <li><a href="/faq">FAQ</a></li>
+              <li><a href="/size-guide">Size Guide</a></li>
+              <li><a href="/track-order">Track Order</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col-title">Company</h4>
+            <ul class="footer-links">
+              <li><a href="/about">Our Story</a></li>
+              <li><a href="/athletes">Athletes</a></li>
+              <li><a href="/sustainability">Sustainability</a></li>
+              <li><a href="/careers">Careers</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 NOIRE. All rights reserved.</p>
+        <div class="footer-bottom-links"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        'use strict';
+
+        /* ---------- Cursor Glow ---------- */
+        const glow = document.getElementById('cursorGlow');
+        if (window.matchMedia('(pointer: fine)').matches) {
+          document.addEventListener('mousemove', (e) => {
+            requestAnimationFrame(() => {
+              glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+            });
+          });
+        } else {
+          glow.style.display = 'none';
+        }
+
+        /* ---------- Hamburger ---------- */
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        hamburger.addEventListener('click', () => {
+          hamburger.classList.toggle('active');
+          mobileMenu.classList.toggle('open');
+          document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        });
+        mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+          hamburger.classList.remove('active');
+          mobileMenu.classList.remove('open');
+          document.body.style.overflow = '';
+        }));
+
+        /* ---------- Search ---------- */
+        const searchToggle = document.getElementById('searchToggle');
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchClose = document.getElementById('searchClose');
+        const searchInput = searchOverlay.querySelector('.search-input');
+        searchToggle.addEventListener('click', () => {
+          searchOverlay.classList.add('open');
+          document.body.style.overflow = 'hidden'; setTimeout(() => searchInput.focus(), 400);
+        });
+        searchClose.addEventListener('click', closeSearch);
+        searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) closeSearch(); });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && searchOverlay.classList.contains('open')) closeSearch();
+        });
+        function closeSearch() {
+          searchOverlay.classList.remove('open'); document.body.style.overflow = '';
+          searchInput.value = '';
+        }
+
+        /* ---------- Image Gallery (Desktop) ---------- */
+        const images = JSON.parse('<%- JSON.stringify(allImages.map(img => img.url)) %>');
+        let currentImg = 0;
+        const mainImg = document.getElementById('pdpMainImg');
+        const thumbs = document.querySelectorAll('.pdp-thumb');
+        const dots = document.querySelectorAll('.pdp-image-dot');
+        const prevBtn = document.getElementById('imgPrev');
+        const nextBtn = document.getElementById('imgNext');
+
+        function showImage(idx) {
+          currentImg = ((idx % images.length) + images.length) % images.length;
+          mainImg.style.opacity = '0';
+          mainImg.style.transition = 'opacity 0.25s ease';
+          setTimeout(() => {
+            mainImg.src = images[currentImg];
+            mainImg.style.opacity = '1';
+          }, 250);
+          thumbs.forEach((t, i) => t.classList.toggle('active', i === currentImg));
+          dots.forEach((d, i) => d.classList.toggle('active', i === currentImg));
+        }
+
+        thumbs.forEach((t) => t.addEventListener('click', () => showImage(+t.dataset.index)));
+        dots.forEach((d) => d.addEventListener('click', () => showImage(+d.dataset.index)));
+        if (prevBtn) prevBtn.addEventListener('click', () => showImage(currentImg - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => showImage(currentImg + 1));
+
+        /* ---------- Mobile Gallery (Touch Swipe) ---------- */
+        const mobileTrack = document.getElementById('mobileGalleryTrack');
+        const mobileDots = document.querySelectorAll('.pdp-mobile-dot');
+        let mobileIdx = 0;
+        let touchStartX = 0;
+        let touchDiff = 0;
+
+        function showMobileSlide(idx) {
+          mobileIdx = ((idx % images.length) + images.length) % images.length;
+          mobileTrack.style.transform = `translateX(-${mobileIdx * 100}%)`;
+          mobileDots.forEach((d, i) => d.classList.toggle('active', i === mobileIdx));
+        }
+
+        mobileDots.forEach((d) => d.addEventListener('click', () => showMobileSlide(+d.dataset.index)));
+
+        const mobileGallery = document.getElementById('mobileGallery');
+        if (mobileGallery) {
+          mobileGallery.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+          }, { passive: true });
+          mobileGallery.addEventListener('touchend', (e) => {
+            touchDiff = touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(touchDiff) > 50) {
+              if (touchDiff > 0) showMobileSlide(mobileIdx + 1);
+              else showMobileSlide(mobileIdx - 1);
+            }
+          }, { passive: true });
+        }
+
+        /* ---------- Color Selector ---------- */
+        const colorBtns = document.querySelectorAll('.pdp-color-swatch');
+        const colorNameEl = document.getElementById('selectedColorName');
+        colorBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            colorBtns.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (colorNameEl) colorNameEl.textContent = btn.dataset.color;
+          });
+        });
+
+        /* ---------- Size Selector ---------- */
+        const sizeBtns = document.querySelectorAll('.pdp-size-btn');
+        const sizeNameEl = document.getElementById('selectedSizeName');
+        sizeBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (btn.classList.contains('out-of-stock')) return;
+            sizeBtns.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (sizeNameEl) sizeNameEl.textContent = btn.dataset.size;
+          });
+        });
+
+        /* ---------- Quantity ---------- */
+        const qtyValue = document.getElementById('qtyValue');
+        const qtyMinus = document.getElementById('qtyMinus');
+        const qtyPlus = document.getElementById('qtyPlus');
+
+        qtyMinus.addEventListener('click', () => {
+          let v = parseInt(qtyValue.value);
+          if (v > 1) qtyValue.value = v - 1;
+        });
+
+        qtyPlus.addEventListener('click', () => {
+          let v = parseInt(qtyValue.value);
+          if (v < 10) qtyValue.value = v + 1;
+        });
+
+        /* ---------- Add to Cart Animation ---------- */
+        const addBtn = document.getElementById('addToCartBtn');
+        addBtn.addEventListener('click', () => {
+          addBtn.classList.add('added');
+          addBtn.innerHTML = `
+          <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7" /></svg>
+          Added to Cart
+        `;
+          setTimeout(() => {
+            addBtn.classList.remove('added');
+            addBtn.innerHTML = `
+            <svg viewBox="0 0 24 24">
+              <path d="M6 6h15l-1.5 9h-12z" />
+              <circle cx="9" cy="20" r="1.5" />
+              <circle cx="18" cy="20" r="1.5" />
+              <path d="M1 1h4l1 5" />
+            </svg>
+            Add to Cart
+          `;
+          }, 2000);
+        });
+
+        /* ---------- Wishlist Toggle ---------- */
+        const wishBtn = document.getElementById('wishlistBtn');
+        wishBtn.addEventListener('click', () => {
+          wishBtn.classList.toggle('active');
+        });
+
+        /* ---------- Detail Accordion ---------- */
+        document.querySelectorAll('.pdp-detail-toggle').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const body = btn.nextElementSibling;
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', !expanded);
+            body.classList.toggle('open');
+          });
+        });
+
+        /* ---------- Keyboard: Arrow keys for gallery ---------- */
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') showImage(currentImg - 1);
+          if (e.key === 'ArrowRight') showImage(currentImg + 1);
+        });
+
+      })();
+    </script>
+
+  <!-- Auth Panel -->
+  <div class="auth-overlay" id="authOverlay"></div>
+  <div class="auth-panel" id="authPanel">
+    <div class="auth-header">
+      <h2 id="authTitle">Sign In</h2>
+      <button class="auth-close" id="authClose" aria-label="Close login">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <button class="auth-google-btn">
+      <svg viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+      </svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider">or</div>
+    <form class="auth-form" onsubmit="event.preventDefault();">
+      <div class="auth-input-group" id="authNameGroup" style="display: none;">
+        <label for="authName">Name</label>
+        <input type="text" id="authName" placeholder="Enter your full name" />
+      </div>
+      <div class="auth-input-group">
+        <label for="authEmail">Email</label>
+        <input type="email" id="authEmail" placeholder="Enter your email" required />
+      </div>
+      <div class="auth-input-group">
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" placeholder="Enter your password" required />
+      </div>
+      <button type="submit" class="auth-submit-btn" id="authSubmitBtn">Sign In</button>
+    </form>
+    <div class="auth-footer">
+      <span id="authFooterText">Don't have an account?</span> <a href="#" id="authToggleMode">Sign up</a>
+    </div>
+  </div>
+  <script>
+    const authToggles = document.querySelectorAll('.auth-toggle');
+    const authOverlay = document.getElementById('authOverlay');
+    const authPanel = document.getElementById('authPanel');
+    const authClose = document.getElementById('authClose');
+    function openAuth(e) { e.preventDefault(); authOverlay.classList.add('open'); authPanel.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeAuth() { authOverlay.classList.remove('open'); authPanel.classList.remove('open'); document.body.style.overflow = ''; }
+    authToggles.forEach(t => t.addEventListener('click', openAuth));
+    if(authClose) authClose.addEventListener('click', closeAuth);
+    if(authOverlay) authOverlay.addEventListener('click', closeAuth);
+
+    const authToggleMode = document.getElementById('authToggleMode');
+    const authTitle = document.getElementById('authTitle');
+    const authNameGroup = document.getElementById('authNameGroup');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authFooterText = document.getElementById('authFooterText');
+    let isSignUp = false;
+
+    if(authToggleMode) {
+      authToggleMode.addEventListener('click', (e) => {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        if(isSignUp) {
+          authTitle.textContent = 'Create Account';
+          authNameGroup.style.display = 'flex';
+          authNameGroup.querySelector('input').required = true;
+          authSubmitBtn.textContent = 'Sign Up';
+          authFooterText.textContent = 'Already have an account?';
+          authToggleMode.textContent = 'Sign in';
+        } else {
+          authTitle.textContent = 'Sign In';
+          authNameGroup.style.display = 'none';
+          authNameGroup.querySelector('input').required = false;
+          authSubmitBtn.textContent = 'Sign In';
+          authFooterText.textContent = "Don't have an account?";
+          authToggleMode.textContent = 'Sign up';
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
